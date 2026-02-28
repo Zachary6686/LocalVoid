@@ -1,0 +1,42 @@
+import requests # type: ignore
+import re
+
+def get_qqw(region, prefix):
+    number_sg = f"{region}{prefix}"
+    url = f"https://telphone.cn/prefix/{number_sg}/"
+    response = requests.get(url)
+    if response.status_code != 200:
+        return []
+    html_content = response.text
+    pattern = re.compile(r'<a href="/prefix/(\d{7})/">([\d]+)号段')
+    matches = pattern.findall(html_content)
+    numSG_list = [match[1] for match in matches]
+    return numSG_list
+
+def filter_number_segments(pattern, numSG_list):
+    regex_pattern = pattern.replace('x', '\\d')
+    return [num for num in numSG_list if re.fullmatch(regex_pattern, num)]
+
+def generate_suffixes(pattern):
+    suffixes = [f'{i:04d}' for i in range(10000)]
+    regex_pattern = pattern.replace('x', '\\d')
+    return [suffix for suffix in suffixes if re.fullmatch(regex_pattern, suffix)]
+
+def generate_phone_numbers():
+    phonex = input("输入模糊手机号：")
+    region = input("输入地区：")
+    numSG_list = get_qqw(region, phonex[:3])
+    numSG_input = phonex[:7]
+    matched_numSG = filter_number_segments(numSG_input, numSG_list)
+    suffix_input = phonex[7:]
+    matched_suffixes = generate_suffixes(suffix_input)
+
+    with open('手机号.txt', 'w') as f:
+        for qqw in matched_numSG:
+            for hsw in matched_suffixes:
+                f.write(qqw + hsw + "\n")
+
+    print('手机号保存成功')
+
+if __name__ == "__main__":
+    generate_phone_numbers()
