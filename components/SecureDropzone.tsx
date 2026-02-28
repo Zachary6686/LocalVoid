@@ -15,7 +15,9 @@ export default function SecureDropzone() {
       const result = await processFileToJSON(file);
       await generateAndDownloadPDF(result.data, watermark);
     } catch (err) {
-      alert("处理失败，请检查文件格式是否正确");
+      alert(`解析失败: ${err.message || "未知错误"}`);
+      console.error(err);
+}
     } finally {
       setLoading(false);
     }
@@ -45,3 +47,4 @@ export default function SecureDropzone() {
     </div>
   );
 }
+
