@@ -10,14 +10,21 @@ export default function SecureDropzone() {
   const handleFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
     setLoading(true);
     try {
       const result = await processFileToJSON(file);
+      // 成功解析 JSON 后，立即触发 PDF 生成
       await generateAndDownloadPDF(result.data, watermark);
-    } catch (err) {
+    } catch (err: any) {
+      // 捕获所有解析或 PDF 生成过程中的错误
       alert(`解析失败: ${err.message || "未知错误"}`);
-      console.error(err);
-}
+      console.error("LocalVoid Error Details:", err);
+    } finally {
+      // 无论成功还是失败，最后都关闭 Loading 状态
+      setLoading(false);
+    }
+  }; //
     } finally {
       setLoading(false);
     }
@@ -47,4 +54,5 @@ export default function SecureDropzone() {
     </div>
   );
 }
+
 
