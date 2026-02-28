@@ -2,9 +2,19 @@ import React from 'react';
 import { Document, Page, Text, View, StyleSheet, Font, pdf } from '@react-pdf/renderer';
 
 // 注册本地字体，确保路径指向根目录下的 public/fonts
+// 🚨 修改点：直接使用网络路径，绕过本地文件读取错误
 Font.register({
   family: 'Noto Sans SC',
-  src: '/fonts/NotoSansSC-Regular.ttf', 
+  src: 'https://fonts.gstatic.com/s/notosanssc/v26/k3kXo84MPtRZxe-I633xc77XPh1904o.ttf',
+});
+
+const styles = StyleSheet.create({
+  page: { 
+    fontFamily: 'Noto Sans SC', // 确保这里一字不差
+    padding: 40, 
+    backgroundColor: '#ffffff' 
+  },
+  // ... 其余样式不变
 });
 
 const styles = StyleSheet.create({
@@ -50,3 +60,4 @@ export const generateAndDownloadPDF = async (data: any[], watermark: string) => 
   link.download = `LocalVoid_Export_${Date.now()}.pdf`;
   link.click();
 };
+
